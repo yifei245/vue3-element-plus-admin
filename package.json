@@ -2,6 +2,7 @@
   "name": "vue-node",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://supermxscr.github.io/vue3-element-plus-admin",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
