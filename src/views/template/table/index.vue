@@ -1,11 +1,11 @@
 <template>
   <div class="template">
-    <h3>{{ pageTitle }}</h3>
+    <h3>列表</h3>
     <m-table
-      v-if="tableData.data.length > 0"
-      :table-data="tableData"
-      :table-head="tableHead"
-      @pageChange="getList"
+      :table-data="state.tableData"
+      :table-head="state.tableHead"
+      :query="listQuery"
+      @pagination="getList"
     />
   </div>
 </template>
@@ -14,45 +14,40 @@ import { httpRequest } from "@/api/http";
 import MTable from "@/components/m-table/index.vue";
 import tableHeadInfo from "./table";
 import API from "@/api/api-config.js";
-// import { h, resolveComponent } from "vue";
 import { initSetting } from "@/utils/index.js";
 // import { ElMessage, ElMessageBox } from "element-plus";
 import setting from './setting'
+import {  reactive, onMounted } from 'vue';
+import { useStore } from "vuex";
 export default {
   components: {
     MTable,
   },
-  data() {
-    return {
-      tableData: { data: [] },
-      setting: setting,
-      tableHead: [],
-      listQuery: {
-        page: 1,
-        size: 10,
-      },
-    };
-  },
   setup() {
-    let pageTitle = "列表";
+    let store = useStore()
+    const state = reactive({
+      tableData: {},
+      tableHead: initSetting(tableHeadInfo, setting)
+    })
+    let listQuery = {
+      page: 1,
+      size: 10
+    }
+    async function getList (data){
+      store.commit("save", { loading: true })
+      listQuery = data
+      state.tableData =  await httpRequest("GET", API.list).then((res) => res)
+      store.commit("save", { loading: false })
+    }
+    onMounted(async () => {
+      getList()
+    })
     return {
-      pageTitle,
-    };
-  },
-  mounted() {
-    this.tableHead = initSetting(tableHeadInfo, this.setting);
-    this.getList();
-  },
-  methods: {
-    getList() {
-      this.$store.commit("save", { loading: true });
-      httpRequest("GET", API.list).then((res) => {
-        this.$store.commit("save", { loading: false });
-        this.tableData = res;
-      });
-    },
-  },
-};
+      state, listQuery, getList
+    }
+  }
+}
+
 </script>
 <style scoped lang="less">
 

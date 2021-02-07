@@ -5,10 +5,10 @@
         :data="tableData.data"
         stripe
         :height="height"
-        style="width: 100%"
         :max-height="height"
         empty-text="暂无数据"
         size="mini"
+        fit
       >
         <el-table-column
           align="center"
@@ -30,7 +30,7 @@
         :total="tableData.total"
         :page="query.page"
         :limit="query.size"
-        @pagination="pageChange"
+        @pagination="pagination"
       />
     </el-card>
   </div>
@@ -59,30 +59,13 @@ export default {
       default: ()=>[]
     },
   },
-  
-  
-  data(){
+  setup(props,context){
+    let height = window.innerHeight - 300
+    function pagination(data){
+      context.emit('pagination',data)
+    }
     return {
-      height: window.innerHeight - 300
-    }
-  },
-  watch:{
-    height(val){
-      this.height = val
-      console.log(this.height)
-    }
-  },
-  mounted(){
-    window.onresize = () => {
-        return (() => {
-            window.innerHeight = document.body.innerHeight
-            this.height = window.innerHeight - 300
-        })()
-    }
-  },
-  methods:{
-    pageChange(data){
-      this.$emit('pageChange',data)
+      pagination, height
     }
   }
 }
@@ -100,6 +83,9 @@ export default {
     margin-right: 0;
     margin-bottom: 0;
     width: 50%;
+  }
+  .is-scrolling-none .el-table__body-wrapper {
+    overflow: scroll !important;
   }
 }
 </style>

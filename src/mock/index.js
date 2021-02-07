@@ -2,7 +2,7 @@ import Mock from "mockjs"
 const Random = Mock.Random;
 const listData = function (){
   let articles = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 40; i++) {
         let newArticleObject = {
             id:i+1,
             title: Random.title(3, 5),
